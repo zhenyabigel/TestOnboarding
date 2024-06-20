@@ -11,15 +11,15 @@ import by.zhenyabigel.testonboarding.screen.WelcomeScreen
 @Composable
 fun SetupNavGraph(
     navController: NavHostController
-){
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.Welcome.route
     ) {
-        composable(route = Screen.Welcome.route){
+        composable(route = Screen.Welcome.route) {
             WelcomeScreen(navController)
         }
-        composable(route = Screen.Home.route){
+        composable(route = Screen.Home.route) {
             HomeScreen()
         }
     }
