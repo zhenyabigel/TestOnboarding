@@ -56,9 +56,12 @@ kapt {
     correctErrorTypes = true
 }
 dependencies {
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.navigation.compose)
+    implementation (libs.accompanist.pager)
+    implementation (libs.accompanist.pager.indicators)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
