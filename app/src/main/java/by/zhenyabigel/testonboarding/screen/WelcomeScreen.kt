@@ -20,6 +20,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,15 +31,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.zhenyabigel.testonboarding.R
+import by.zhenyabigel.testonboarding.navigation.Screen
 import by.zhenyabigel.testonboarding.ui.theme.PurpleGrey40
 import by.zhenyabigel.testonboarding.ui.theme.robotoFontFamily
 import by.zhenyabigel.testonboarding.util.OnBoardingPage
+import by.zhenyabigel.testonboarding.viewmodel.WelcomeViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WelcomeScreen(navController: NavHostController) {
+fun WelcomeScreen(
+    navController: NavHostController,
+) {
     val pages = listOf(
         OnBoardingPage.First,
         OnBoardingPage.Second,
@@ -59,13 +66,20 @@ fun WelcomeScreen(navController: NavHostController) {
         ) { pozition ->
             PagerScreen(onBoardingPage = pages[pozition])
         }
-        Footer(pagerState = pagerState)
+        Footer(
+            pagerState = pagerState,
+            navController = navController
+        )
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Footer(pagerState: PagerState) {
+fun Footer(
+    pagerState: PagerState,
+    navController: NavHostController
+) {
+    val coroutineScope = rememberCoroutineScope()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,13 +98,13 @@ fun Footer(pagerState: PagerState) {
                 repeat(pagerState.pageCount) { iteration ->
                     val color =
                         if (pagerState.currentPage == iteration) Color.White else PurpleGrey40
-                    val width = if (pagerState.currentPage == iteration) 20.dp else 10.dp
+                    val width = if (pagerState.currentPage == iteration) 24.dp else 8.dp
                     Box(
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(4.dp)
                             .clip(RoundedCornerShape(5.dp))
                             .background(color)
-                            .height(10.dp)
+                            .height(8.dp)
                             .width(width)
                     )
                 }
@@ -98,8 +112,11 @@ fun Footer(pagerState: PagerState) {
             Box(
                 modifier = Modifier
                     .height(40.dp)
-                    .padding(start = 2.dp)
-                    .clickable { }
+                    .padding(start = 4.dp)
+                    .clickable {
+                        navController.popBackStack()
+                        navController.navigate(Screen.Home.route)
+                    }
             ) {
                 Text(
                     text = "Skip",
@@ -116,9 +133,20 @@ fun Footer(pagerState: PagerState) {
             modifier = Modifier
                 .height(58.dp)
                 .width(58.dp)
-                .clickable { },
-
-            ) {
+                .clickable {
+                    when (pagerState.currentPage) {
+                        3 -> {
+                            navController.popBackStack()
+                            navController.navigate(Screen.Home.route)
+                        }
+                        else -> {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        }
+                    }
+                }
+        ) {
             val image = when (pagerState.currentPage) {
                 0 -> painterResource(id = R.drawable.loader_screen1)
                 1 -> painterResource(id = R.drawable.loader_screen2)
