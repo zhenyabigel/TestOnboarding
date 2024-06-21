@@ -56,6 +56,7 @@ kapt {
     correctErrorTypes = true
 }
 dependencies {
+    implementation ("androidx.compose.animation:animation:1.6.8")
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)

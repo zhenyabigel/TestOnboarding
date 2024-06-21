@@ -1,5 +1,8 @@
 package by.zhenyabigel.testonboarding.screen
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,11 +23,15 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -96,14 +103,27 @@ fun Footer(
                 horizontalArrangement = Arrangement.Center
             ) {
                 repeat(pagerState.pageCount) { iteration ->
-                    val color =
-                        if (pagerState.currentPage == iteration) Color.White else PurpleGrey40
-                    val width = if (pagerState.currentPage == iteration) 24.dp else 8.dp
+                    val color by animateColorAsState(
+                        targetValue = if (pagerState.currentPage == iteration) Color.White
+                        else PurpleGrey40,
+                        animationSpec = tween(
+                            durationMillis = 500))
+                    val width by animateDpAsState(
+                        targetValue = if (pagerState.currentPage == iteration) 24.dp else 8.dp,
+                        animationSpec = tween(
+                            durationMillis = 500,
+                        )
+                    )
                     Box(
                         modifier = Modifier
                             .padding(4.dp)
                             .clip(RoundedCornerShape(5.dp))
-                            .background(color)
+                            .drawBehind { drawRoundRect(
+                                color = color,
+                                size = Size(
+                                width = width.toPx(),
+                                height = 8.dp.toPx(),
+                                ),) }
                             .height(8.dp)
                             .width(width)
                     )
